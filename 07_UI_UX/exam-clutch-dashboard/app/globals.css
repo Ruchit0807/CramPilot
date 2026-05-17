@@ -1,0 +1,529 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   CramPilot Design System
+   Visual Identity: calm authority · premium AI SaaS · dark
+   Reference: visual_identity.md
+   ============================================================ */
+
+/* ── CramPilot Color Tokens ─────────────────────────────── */
+:root {
+  /* Dark mode is default and primary */
+  --ec-bg-page:     #111110;
+  --ec-bg-surface:  #1C1C1A;
+  --ec-bg-elevated: #242422;
+  --ec-bg-recessed: #161615;
+
+  --ec-text-primary:   #F0EFE8;
+  --ec-text-secondary: #9E9C96;
+  --ec-text-tertiary:  #706E67;
+  --ec-text-disabled:  #C4C2BC;
+
+  /* Functional accent colors — each has ONE job */
+  --ec-purple:     #818CF8;  /* AI intelligence only */
+  --ec-purple-dim: rgba(129, 140, 248, 0.15);
+  --ec-purple-border: rgba(129, 140, 248, 0.25);
+
+  --ec-amber:     #FBBF24;   /* Urgency / warnings only */
+  --ec-amber-dim: rgba(251, 191, 36, 0.08);
+  --ec-amber-border: rgba(251, 191, 36, 0.2);
+
+  --ec-sage:     #4ADE80;    /* Success / completion only */
+  --ec-sage-dim: rgba(74, 222, 128, 0.08);
+
+  --ec-red:     #F87171;     /* Errors / marks traps only */
+  --ec-red-dim: rgba(248, 113, 113, 0.08);
+  --ec-red-border: rgba(248, 113, 113, 0.2);
+
+  /* Borders */
+  --ec-border:       rgba(255, 255, 255, 0.08);
+  --ec-border-hover: rgba(255, 255, 255, 0.15);
+  --ec-border-focus: rgba(255, 255, 255, 0.25);
+  --ec-border-div:   rgba(255, 255, 255, 0.06);
+
+  /* Spacing (4px base unit) */
+  --ec-space-1: 4px;
+  --ec-space-2: 8px;
+  --ec-space-3: 12px;
+  --ec-space-4: 16px;
+  --ec-space-5: 20px;
+  --ec-space-6: 24px;
+  --ec-space-8: 32px;
+  --ec-space-12: 48px;
+  --ec-space-16: 64px;
+
+  /* Border radius */
+  --ec-radius-tight:   4px;
+  --ec-radius-default: 8px;
+  --ec-radius-soft:    12px;
+
+  /* Animation durations */
+  --ec-dur-micro:      150ms;
+  --ec-dur-standard:   200ms;
+  --ec-dur-transition: 300ms;
+
+  /* Easing */
+  --ec-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── shadcn/ui token overrides (mapped to CramPilot palette) ── */
+  --background:            oklch(0.073 0.004 45);   /* #111110 */
+  --foreground:            oklch(0.96 0.006 75);    /* #F0EFE8 */
+  --card:                  oklch(0.112 0.004 45);   /* #1C1C1A */
+  --card-foreground:       oklch(0.96 0.006 75);
+  --popover:               oklch(0.095 0.004 45);   /* #161615 */
+  --popover-foreground:    oklch(0.96 0.006 75);
+  --primary:               oklch(0.672 0.165 267);  /* #818CF8 purple */
+  --primary-foreground:    oklch(0.073 0.004 45);
+  --secondary:             oklch(0.148 0.004 45);   /* #242422 */
+  --secondary-foreground:  oklch(0.82 0.006 75);
+  --muted:                 oklch(0.112 0.004 45);
+  --muted-foreground:      oklch(0.62 0.006 70);    /* #9E9C96 */
+  --accent:                oklch(0.672 0.165 267);
+  --accent-foreground:     oklch(0.073 0.004 45);
+  --destructive:           oklch(0.71 0.18 25);     /* #F87171 */
+  --destructive-foreground: oklch(0.96 0.006 75);
+  --border:                rgba(255, 255, 255, 0.08);
+  --input:                 oklch(0.095 0.004 45);
+  --ring:                  oklch(0.672 0.165 267);
+  --radius:                0.5rem;
+
+  /* Chart colors */
+  --chart-1: oklch(0.672 0.165 267);  /* purple */
+  --chart-2: oklch(0.82 0.15 90);     /* amber */
+  --chart-3: oklch(0.72 0.18 145);    /* sage */
+  --chart-4: oklch(0.71 0.18 25);     /* red */
+  --chart-5: oklch(0.65 0.15 240);    /* blue */
+
+  /* Sidebar */
+  --sidebar:                  oklch(0.095 0.004 45);
+  --sidebar-foreground:       oklch(0.96 0.006 75);
+  --sidebar-primary:          oklch(0.672 0.165 267);
+  --sidebar-primary-foreground: oklch(0.073 0.004 45);
+  --sidebar-accent:            oklch(0.148 0.004 45);
+  --sidebar-accent-foreground: oklch(0.96 0.006 75);
+  --sidebar-border:            rgba(255, 255, 255, 0.08);
+  --sidebar-ring:              oklch(0.672 0.165 267);
+}
+
+/* Dark class mirrors root (dark is default — no light mode for MVP) */
+.dark {
+  --background:            oklch(0.073 0.004 45);
+  --foreground:            oklch(0.96 0.006 75);
+  --card:                  oklch(0.112 0.004 45);
+  --card-foreground:       oklch(0.96 0.006 75);
+  --popover:               oklch(0.095 0.004 45);
+  --popover-foreground:    oklch(0.96 0.006 75);
+  --primary:               oklch(0.672 0.165 267);
+  --primary-foreground:    oklch(0.073 0.004 45);
+  --secondary:             oklch(0.148 0.004 45);
+  --secondary-foreground:  oklch(0.82 0.006 75);
+  --muted:                 oklch(0.112 0.004 45);
+  --muted-foreground:      oklch(0.62 0.006 70);
+  --accent:                oklch(0.672 0.165 267);
+  --accent-foreground:     oklch(0.073 0.004 45);
+  --destructive:           oklch(0.71 0.18 25);
+  --destructive-foreground: oklch(0.96 0.006 75);
+  --border:                rgba(255, 255, 255, 0.08);
+  --input:                 oklch(0.095 0.004 45);
+  --ring:                  oklch(0.672 0.165 267);
+  --sidebar:               oklch(0.095 0.004 45);
+  --sidebar-foreground:    oklch(0.96 0.006 75);
+  --sidebar-primary:       oklch(0.672 0.165 267);
+  --sidebar-primary-foreground: oklch(0.073 0.004 45);
+  --sidebar-accent:        oklch(0.148 0.004 45);
+  --sidebar-accent-foreground: oklch(0.96 0.006 75);
+  --sidebar-border:        rgba(255, 255, 255, 0.08);
+  --sidebar-ring:          oklch(0.672 0.165 267);
+}
+
+/* ── Tailwind theme extension ────────────────────────────── */
+@theme inline {
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+
+  /* shadcn color mappings */
+  --color-background:            var(--background);
+  --color-foreground:            var(--foreground);
+  --color-card:                  var(--card);
+  --color-card-foreground:       var(--card-foreground);
+  --color-popover:               var(--popover);
+  --color-popover-foreground:    var(--popover-foreground);
+  --color-primary:               var(--primary);
+  --color-primary-foreground:    var(--primary-foreground);
+  --color-secondary:             var(--secondary);
+  --color-secondary-foreground:  var(--secondary-foreground);
+  --color-muted:                 var(--muted);
+  --color-muted-foreground:      var(--muted-foreground);
+  --color-accent:                var(--accent);
+  --color-accent-foreground:     var(--accent-foreground);
+  --color-destructive:           var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border:                var(--border);
+  --color-input:                 var(--input);
+  --color-ring:                  var(--ring);
+  --color-chart-1:               var(--chart-1);
+  --color-chart-2:               var(--chart-2);
+  --color-chart-3:               var(--chart-3);
+  --color-chart-4:               var(--chart-4);
+  --color-chart-5:               var(--chart-5);
+  --color-sidebar:               var(--sidebar);
+  --color-sidebar-foreground:    var(--sidebar-foreground);
+  --color-sidebar-primary:       var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent:        var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border:        var(--sidebar-border);
+  --color-sidebar-ring:          var(--sidebar-ring);
+
+  /* CramPilot custom colors */
+  --color-ec-page:     var(--ec-bg-page);
+  --color-ec-surface:  var(--ec-bg-surface);
+  --color-ec-elevated: var(--ec-bg-elevated);
+  --color-ec-recessed: var(--ec-bg-recessed);
+  --color-ec-purple:   var(--ec-purple);
+  --color-ec-amber:    var(--ec-amber);
+  --color-ec-sage:     var(--ec-sage);
+  --color-ec-red:      var(--ec-red);
+
+  /* Border radius tokens */
+  --radius-sm:  calc(var(--radius) - 4px);
+  --radius-md:  calc(var(--radius) - 2px);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/* ── Base Layer ───────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 400;
+    background-color: var(--ec-bg-page);
+    color: var(--ec-text-primary);
+    min-height: 100svh;
+    /* Prevent layout shift from scrollbar */
+    overflow-x: hidden;
+  }
+
+  /* Typography reset — Inter at 300–500 weight only */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--ec-text-primary);
+  }
+
+  p {
+    color: var(--ec-text-primary);
+    line-height: 1.6;
+    max-width: 72ch; /* Prevent reading fatigue */
+  }
+
+  /* Links */
+  a {
+    color: var(--ec-purple);
+    text-decoration: none;
+    transition: opacity var(--ec-dur-micro) var(--ec-ease-out);
+  }
+  a:hover { opacity: 0.8; }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--ec-purple-dim);
+    color: var(--ec-text-primary);
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid var(--ec-purple);
+    outline-offset: 2px;
+    border-radius: var(--ec-radius-tight);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--ec-border);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ec-border-hover); }
+}
+
+/* ── Utility Layer ────────────────────────────────────────── */
+@layer utilities {
+  /* ── Typography Utilities ── */
+  .text-display {
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .text-h1 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .text-h2 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .text-h3 {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .text-body {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  .text-body-sm {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .text-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .text-mono {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .text-caption {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ec-text-tertiary);
+  }
+
+  /* ── Color Utilities ── */
+  .text-primary-ec   { color: var(--ec-text-primary); }
+  .text-secondary-ec { color: var(--ec-text-secondary); }
+  .text-tertiary-ec  { color: var(--ec-text-tertiary); }
+  .text-disabled-ec  { color: var(--ec-text-disabled); }
+  .text-purple-ec    { color: var(--ec-purple); }
+  .text-amber-ec     { color: var(--ec-amber); }
+  .text-sage-ec      { color: var(--ec-sage); }
+  .text-red-ec       { color: var(--ec-red); }
+
+  .bg-page-ec     { background-color: var(--ec-bg-page); }
+  .bg-surface-ec  { background-color: var(--ec-bg-surface); }
+  .bg-elevated-ec { background-color: var(--ec-bg-elevated); }
+  .bg-recessed-ec { background-color: var(--ec-bg-recessed); }
+
+  /* ── Border Utilities ── */
+  .border-ec         { border-color: var(--ec-border); }
+  .border-ec-hover   { border-color: var(--ec-border-hover); }
+  .border-ec-focus   { border-color: var(--ec-border-focus); }
+  .border-ec-purple  { border-color: var(--ec-purple-border); }
+  .border-ec-amber   { border-color: var(--ec-amber-border); }
+  .border-ec-red     { border-color: var(--ec-red-border); }
+
+  /* ── Glassmorphism Utilities ── */
+  .glass {
+    background: rgba(28, 28, 26, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--ec-border);
+  }
+
+  .glass-elevated {
+    background: rgba(36, 36, 34, 0.8);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid var(--ec-border-hover);
+  }
+
+  .glass-purple {
+    background: rgba(129, 140, 248, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--ec-purple-border);
+  }
+
+  .glass-amber {
+    background: var(--ec-amber-dim);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--ec-amber-border);
+  }
+
+  /* ── Gradient Utilities ── */
+  .gradient-purple {
+    background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, transparent 60%);
+  }
+
+  .gradient-surface {
+    background: linear-gradient(180deg, var(--ec-bg-surface) 0%, var(--ec-bg-page) 100%);
+  }
+
+  .gradient-text-purple {
+    background: linear-gradient(135deg, #818CF8 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Card Variant Utilities ── */
+
+  /* Intelligence Card — AI-generated content */
+  .card-intelligence {
+    background: var(--ec-bg-surface);
+    border: 1px solid var(--ec-purple-border);
+    border-left: 3px solid var(--ec-purple);
+    border-radius: var(--ec-radius-default);
+    padding: 20px 20px 20px 24px;
+  }
+
+  /* Action Card — prompts and tasks */
+  .card-action {
+    background: var(--ec-bg-surface);
+    border: 1px solid var(--ec-border);
+    border-radius: var(--ec-radius-default);
+    padding: 16px 20px;
+    transition: border-color var(--ec-dur-micro) var(--ec-ease-out);
+  }
+  .card-action:hover { border-color: var(--ec-border-hover); }
+
+  /* Warning Card — marks traps */
+  .card-warning {
+    background: var(--ec-amber-dim);
+    border: 1px solid var(--ec-amber-border);
+    border-left: 3px solid var(--ec-amber);
+    border-radius: var(--ec-radius-default);
+    padding: 16px 16px 16px 20px;
+  }
+
+  /* ── Priority Indicator Bars ── */
+  .priority-bar-critical { background: var(--ec-purple); }
+  .priority-bar-moderate { background: #4B4B49; }
+  .priority-bar-low      { background: #2D2D2B; }
+  .priority-bar-complete { background: var(--ec-sage); }
+
+  /* ── Prompt Code Block ── */
+  .prompt-block {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--ec-bg-recessed);
+    border-radius: var(--ec-radius-tight);
+    padding: 12px 14px;
+    color: var(--ec-text-secondary);
+    line-height: 1.6;
+    overflow-x: auto;
+    max-height: 120px;
+    overflow-y: hidden;
+    transition: max-height var(--ec-dur-standard) var(--ec-ease-out);
+  }
+  .prompt-block.expanded { max-height: none; }
+
+  /* ── Phase Indicator ── */
+  .phase-connector {
+    width: 24px;
+    height: 1px;
+    background: var(--ec-border);
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 4px;
+  }
+
+  /* ── Mobile touch targets ── */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Loading bar ── */
+  .loading-bar {
+    height: 2px;
+    background: var(--ec-purple);
+    border-radius: 1px;
+    transform-origin: left;
+  }
+
+  /* ── Emergency glow ── */
+  .emergency-glow {
+    box-shadow: 0 0 0 1px var(--ec-amber-border),
+                0 0 20px rgba(251, 191, 36, 0.1);
+  }
+
+  /* ── Completion strikethrough ── */
+  .completed-topic {
+    text-decoration: line-through;
+    text-decoration-color: var(--ec-text-tertiary);
+    text-decoration-thickness: 1px;
+    opacity: 0.6;
+  }
+
+  /* ── Blur placeholder (freemium gate) ── */
+  .content-locked {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  /* ── Reduced motion overrides ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+
+  /* ── Mobile-specific utilities ── */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* ── Shimmer skeleton animation ── */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 40%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0.04) 60%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-sweep 1.6s ease-in-out infinite;
+  }
+
+  @keyframes shimmer-sweep {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
+
