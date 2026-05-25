@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import DodoPayments from 'dodopayments'
 
-const dodoClient = new DodoPayments({
-  bearerToken: process.env.DODO_SECRET_KEY,
-  environment: 'test_mode',
-});
-
 export async function GET(req: Request) {
   try {
+    const dodoClient = new DodoPayments({
+      bearerToken: process.env.DODO_SECRET_KEY || 'dummy_for_build',
+      environment: 'test_mode',
+    });
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     

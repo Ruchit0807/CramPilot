@@ -3,13 +3,13 @@ import { headers } from 'next/headers'
 import { createAdminClient } from '@/lib/supabase/server'
 import DodoPayments from 'dodopayments'
 
-const dodoClient = new DodoPayments({
-  bearerToken: process.env.DODO_SECRET_KEY,
-  webhookKey: process.env.DODO_WEBHOOK_SECRET
-});
-
 export async function POST(req: Request) {
   try {
+    const dodoClient = new DodoPayments({
+      bearerToken: process.env.DODO_SECRET_KEY || 'dummy_for_build',
+      webhookKey: process.env.DODO_WEBHOOK_SECRET || 'dummy_for_build'
+    });
+
     const body = await req.text()
     const headersList = await headers()
     const headerObj = Object.fromEntries(headersList.entries())
