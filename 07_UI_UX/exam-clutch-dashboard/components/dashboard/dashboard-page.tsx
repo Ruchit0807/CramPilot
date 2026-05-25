@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Sparkles, Zap, Clock, BookOpen } from 'lucide-react'
+import { Sparkles, Zap, Clock, BookOpen, Gem } from 'lucide-react'
 import { InputPanel, type InputPanelState } from '@/components/dashboard/input-panel'
 import { ProfessorSummaryCard } from '@/components/dashboard/professor-summary-card'
 import { IntelligencePanel } from '@/components/dashboard/intelligence-panel'
@@ -29,7 +29,7 @@ const DEFAULT_STATE: InputPanelState = {
 }
 
 // ── Top Stats Bar ────────────────────────────────────────────
-function StatsBar({ state }: { state: InputPanelState }) {
+function StatsBar({ state, credits }: { state: InputPanelState, credits: number }) {
   const now = new Date()
   const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
 
@@ -65,10 +65,16 @@ function StatsBar({ state }: { state: InputPanelState }) {
       value: state.weakTopics.length > 0 ? `${state.weakTopics.length} added` : '—',
       color: state.weakTopics.length > 0 ? '#F87171' : '#706E67',
     },
+    {
+      icon: Gem,
+      label: 'Credits',
+      value: credits.toString(),
+      color: credits > 0 ? '#FBBF24' : '#706E67',
+    },
   ]
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-6">
       {stats.map((stat) => {
         const Icon = stat.icon
         return (
@@ -104,7 +110,7 @@ function StatsBar({ state }: { state: InputPanelState }) {
 }
 
 // ── Main Dashboard ───────────────────────────────────────────
-export function DashboardPage() {
+export function DashboardPage({ initialCredits = 0 }: { initialCredits?: number }) {
   const [state, setState] = useState<InputPanelState>(DEFAULT_STATE)
   const session = useSessionStore((s) => s.session)
   const [mounted, setMounted] = useState(false)
@@ -124,6 +130,10 @@ export function DashboardPage() {
     // TODO: wire to actual generation flow (Phase 3)
     console.log('Generating strategy with state:', state)
   }, [state])
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-[#111110]" />
+  }
 
   return (
     <motion.div
@@ -165,7 +175,7 @@ export function DashboardPage() {
         )}
 
         {/* ── Quick Stats Bar ───────────────────────────── */}
-        <StatsBar state={state} />
+        <StatsBar state={state} credits={initialCredits} />
 
         {/* ── 3-Column Layout ───────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr_1fr] gap-4 xl:gap-6">
@@ -211,6 +221,8 @@ export function DashboardPage() {
               targetMarks={state.targetMarks}
               weakTopics={state.weakTopics}
               professorArchetype={state.professorPatterns}
+              syllabusFile={state.syllabusFile}
+              pyqFile={state.pyqFile}
               onGenerate={handleGenerate}
             />
 

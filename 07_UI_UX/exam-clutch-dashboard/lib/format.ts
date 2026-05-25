@@ -73,6 +73,7 @@ export function formatProbabilityLabel(stars: 1 | 2 | 3): string {
 export function formatPriorityLabel(priority: TopicPriority): string {
   const map: Record<TopicPriority, string> = {
     critical: 'CRITICAL',
+    high: 'HIGH PRIORITY',
     moderate: 'MODERATE',
     low: 'LOW PRIORITY',
     skip: 'SKIP',
@@ -83,6 +84,7 @@ export function formatPriorityLabel(priority: TopicPriority): string {
 export function formatPriorityColor(priority: TopicPriority): string {
   const map: Record<TopicPriority, string> = {
     critical: 'text-[#818CF8]',
+    high: 'text-[#A78BFA]',
     moderate: 'text-[#9E9C96]',
     low: 'text-[#706E67]',
     skip: 'text-[#706E67]',
@@ -93,6 +95,7 @@ export function formatPriorityColor(priority: TopicPriority): string {
 export function formatPriorityBarColor(priority: TopicPriority): string {
   const map: Record<TopicPriority, string> = {
     critical: 'bg-[#818CF8]',
+    high: 'bg-[#A78BFA]',
     moderate: 'bg-[#9E9C96]',
     low: 'bg-[#4B4B49]',
     skip: 'bg-transparent',

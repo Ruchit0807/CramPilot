@@ -13,10 +13,8 @@ export type WorkflowPhase =
 
 export type PhaseStatus = 'pending' | 'active' | 'completed' | 'locked'
 
-export type Priority = 'critical' | 'high' | 'moderate' | 'skip'
+export type Priority = 'critical' | 'high' | 'moderate' | 'low' | 'skip'
 export type TopicPriority = Priority
-
-export type AITool = 'chatgpt' | 'claude' | 'gemini' | 'notebooklm'
 
 export type TargetMarks = 'pass' | '55-70' | '70-85' | '85+'
 

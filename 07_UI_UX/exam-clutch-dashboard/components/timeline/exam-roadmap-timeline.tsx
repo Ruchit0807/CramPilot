@@ -43,7 +43,7 @@ function getNodeColors(block: TimelineBlock) {
   if (block.type === 'exam')   return { border: '#F87171', bg: 'rgba(248,113,113,0.12)' }
   if (block.type === 'sleep')  return { border: '#3B82F6', bg: 'rgba(59,130,246,0.1)'  }
   if (block.type === 'break')  return { border: '#4ADE80', bg: 'rgba(74,222,128,0.08)' }
-  const urgency = URGENCY_META[block.urgency]
+  const urgency = URGENCY_META[block.urgency] || URGENCY_META['moderate']
   return { border: urgency.color, bg: urgency.bg }
 }
 
@@ -60,7 +60,7 @@ function TimelineCard({ block, index }: { block: TimelineBlock; index: number })
   const toggleBlock = useSessionStore((s) => s.toggleBlock)
 
   const { border, bg } = getNodeColors(block)
-  const urgency         = URGENCY_META[block.urgency]
+  const urgency         = URGENCY_META[block.urgency] || URGENCY_META['moderate']
   const tool            = block.tool ? TOOL_META[block.tool] : null
   const method          = block.method ? METHOD_META[block.method] : null
 
@@ -97,7 +97,7 @@ function TimelineCard({ block, index }: { block: TimelineBlock; index: number })
 
       {/* ── Card ── */}
       <div className={cn(
-        'flex-1 mb-3 rounded-2xl border overflow-hidden transition-all duration-200',
+        'flex-1 min-w-0 mb-3 rounded-2xl border overflow-hidden transition-all duration-200',
         done
           ? 'border-[rgba(74,222,128,0.2)] bg-[rgba(74,222,128,0.04)] opacity-75'
           : block.type === 'exam'

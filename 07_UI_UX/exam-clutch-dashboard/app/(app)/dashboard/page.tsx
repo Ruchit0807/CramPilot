@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DashboardPage } from '@/components/dashboard/dashboard-page'
+import { checkAccessStatus } from '@/app/actions/credits.actions'
 
 export const metadata: Metadata = {
   title: 'Dashboard — Exam Command Center',
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 // ── Dashboard Route ─────────────────────────────────────────
 // Server component — renders the client DashboardPage
-export default function DashboardRoute() {
-  return <DashboardPage />
+export default async function DashboardRoute() {
+  const { creditsRemaining } = await checkAccessStatus()
+  return <DashboardPage initialCredits={creditsRemaining} />
 }

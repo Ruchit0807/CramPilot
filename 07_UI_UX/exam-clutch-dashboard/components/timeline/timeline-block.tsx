@@ -72,7 +72,7 @@ export function TimelineBlock({
       <Wrapper
         {...motionProps}
         className={cn(
-          'flex-1 rounded-lg border p-3 mb-3 transition-all duration-150',
+          'flex-1 min-w-0 rounded-lg border p-3 mb-3 transition-all duration-150',
           blockTypeStyles[block.type],
           block.isCompleted && 'opacity-50',
           !isBreak && !isStop && !block.isCompleted && 'hover:border-ec-hover'

@@ -15,8 +15,8 @@ export function PreviousSessionBanner() {
   if (!session || !session.strategy) return null
 
   const { strategy } = session
-  const totalBlocks = strategy.timeline.length
-  const progressPercent = Math.round((completedBlocks.length / totalBlocks) * 100)
+  const totalBlocks = strategy.timeline?.length || 0
+  const progressPercent = totalBlocks > 0 ? Math.round((completedBlocks.length / totalBlocks) * 100) : 0
   const isEmergency = session.hoursRemaining <= 12
 
   return (
@@ -45,7 +45,7 @@ export function PreviousSessionBanner() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-[11px] text-[#706E67] flex items-center gap-1"><Shield className="w-3 h-3"/> Survivability</span>
-              <span className="text-[14px] font-[600] text-[#4ADE80]">{strategy.scores.survivabilityScore}/100</span>
+              <span className="text-[14px] font-[600] text-[#4ADE80]">{strategy.scores?.survivabilityScore ?? '--'}/100</span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-[11px] text-[#706E67] flex items-center gap-1"><BookOpen className="w-3 h-3"/> Professor</span>

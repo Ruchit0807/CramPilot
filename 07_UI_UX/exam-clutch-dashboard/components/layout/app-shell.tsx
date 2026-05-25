@@ -25,6 +25,7 @@ const NAV_ITEMS = [
   { id: 'pyq',        label: 'PYQ Analysis',   href: '/pyq',        icon: BarChart3,       badge: null,  accent: 'purple' },
   { id: 'flashcards', label: 'Flashcards',     href: '/flashcards', icon: Layers,          badge: null,  accent: 'sage'   },
   { id: 'schedule',   label: 'Schedule',       href: '/schedule',   icon: CalendarDays,    badge: null,  accent: 'amber'  },
+  { id: 'pricing',    label: 'Premium Pack',   href: '/pricing',    icon: Sparkles,        badge: 'PRO', accent: 'amber'  },
 ] as const
 
 // Bottom nav — condensed 4 items for mobile

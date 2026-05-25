@@ -93,7 +93,7 @@ export function ResultsPage() {
     }
   }, [session, router])
 
-  if (!session || !session.strategy) {
+  if (!mounted || !session || !session.strategy) {
     return (
       <div className="min-h-screen bg-[#111110] flex flex-col items-center justify-center p-6 text-center">
         <motion.div
@@ -150,17 +150,17 @@ export function ResultsPage() {
         </div>
 
         {/* ── Tab bar ──────────────────────────────────────── */}
-        <div className="relative flex gap-0.5 p-1 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] mb-6 overflow-x-auto">
+        <div className="relative flex gap-6 p-2 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] mb-6 overflow-x-auto no-scrollbar">
           {TABS.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'relative pb-3 text-[12px] font-[500] uppercase tracking-[0.06em] transition-colors',
+                'relative px-4 py-2.5 text-[12px] font-[500] uppercase tracking-[0.06em] transition-colors whitespace-nowrap rounded-lg',
                 activeTab === tab.id ? 'text-[#F0EFE8]' : 'text-[#706E67] hover:text-[#9E9C96]'
               )}
             >
               {activeTab === tab.id && (
                 <motion.div layoutId="tab-indicator"
-                  className="absolute inset-0 rounded-lg bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]"
+                  className="absolute inset-0 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.1)]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
               )}
               <span className="relative z-10">{tab.label}</span>

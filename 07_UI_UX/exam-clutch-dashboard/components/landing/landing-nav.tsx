@@ -8,6 +8,7 @@
 // ============================================================
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Menu, X, Zap } from 'lucide-react'
@@ -17,6 +18,7 @@ const NAV_LINKS = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Professor AI', href: '#professor' },
   { label: 'Prompts', href: '#prompts' },
+  { label: 'Pricing', href: '/pricing' },
 ]
 
 export function LandingNav() {
@@ -48,13 +50,17 @@ export function LandingNav() {
       )}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-32">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-7 h-7 rounded-md bg-[#818CF8]/20 border border-[#818CF8]/30 flex items-center justify-center group-hover:bg-[#818CF8]/30 transition-colors">
-              <Zap className="w-3.5 h-3.5 text-[#818CF8]" />
-            </div>
-            <span className="text-body-sm font-medium text-[#F0EFE8]">CramPilot</span>
+            <Image 
+              src="/logo-transparent.png" 
+              alt="CramPilot Logo" 
+              width={400} 
+              height={120} 
+              className="h-24 w-auto object-contain brightness-0 invert" 
+              priority
+            />
           </Link>
 
           {/* Desktop center links */}
@@ -105,10 +111,10 @@ export function LandingNav() {
                   transition={{ duration: 0.2 }}
                 >
                   <Link
-                    href="/session/new"
+                    href="/login"
                     className="touch-target px-4 py-2 rounded-lg border border-[#818CF8]/30 text-[#818CF8] text-body-sm hover:bg-[#818CF8]/8 transition-all duration-150"
                   >
-                    Start free
+                    Log in
                   </Link>
                 </motion.div>
               )}

@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Rocket, Sparkles, ArrowRight, Loader2, Check, AlertTriangle, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSessionStore } from '@/store/session.store'
+import { generateAIStrategy } from '@/app/actions/session'
 import { generateMockStrategy } from '@/lib/mock-engine'
 
 // ── Generation stage definitions ────────────────────────────
@@ -33,36 +34,36 @@ function buildStages(hoursRemaining: number): Stage[] {
         : isEmergency
         ? '🚨 Emergency mode — prioritizing by marks × frequency.'
         : 'Building your professor intelligence profile.',
-      durationMs: 500, progress: 15,
+      durationMs: 800, progress: 15,
     },
     {
       label: 'Detecting high-scoring topics from PYQs...',
       sublabel: 'We\'re weighting every topic by exam frequency × marks value.',
-      durationMs: 550, progress: 32,
+      durationMs: 900, progress: 32,
     },
     {
       label: 'Building emergency topic roadmap...',
       sublabel: isCritical
         ? 'You still have enough time to recover — we\'re focusing only on what matters.'
         : 'Focus only on what maximizes your marks. Skipping the rest.',
-      durationMs: 500, progress: 52,
+      durationMs: 800, progress: 52,
     },
     {
       label: 'Optimizing AI workflows...',
       sublabel: 'Sequencing Claude → NotebookLM → ChatGPT → Gemini for your window.',
-      durationMs: 500, progress: 70,
+      durationMs: 800, progress: 70,
     },
     {
       label: 'Generating revision strategy...',
       sublabel: 'We\'re prioritizing the highest ROI topics for your time window.',
-      durationMs: 450, progress: 86,
+      durationMs: 700, progress: 86,
     },
     {
       label: 'Finalizing your survival roadmap...',
       sublabel: isEmergency
         ? 'Almost done — your exam is survivable. Trust the system.'
         : 'Your personalized hour-by-hour plan is almost ready.',
-      durationMs: 250, progress: 98,
+      durationMs: 500, progress: 98,
     },
   ]
 }
@@ -85,6 +86,8 @@ interface GenerateCTAProps {
   weakTopics?: string[]
   professorArchetype?: string[]
   subjectCategory?: string
+  syllabusFile?: File | null
+  pyqFile?: File | null
   onGenerate?: () => void
   className?: string
 }
@@ -97,6 +100,8 @@ export function GenerateCTA({
   weakTopics = [],
   professorArchetype = [],
   subjectCategory = 'mixed',
+  syllabusFile,
+  pyqFile,
   onGenerate,
   className,
 }: GenerateCTAProps) {
@@ -106,6 +111,7 @@ export function GenerateCTA({
 
   const [phase, setPhase] = useState<'idle' | 'loading' | 'done'>('idle')
   const [stageIdx, setStageIdx] = useState(0)
+  const [aiSource, setAiSource] = useState<'ai' | 'cache' | 'fallback' | null>(null)
   const [progress, setProgress] = useState(0)
   const sessionIdRef = useRef<string | null>(null)
 
@@ -130,6 +136,7 @@ export function GenerateCTA({
     setPhase('loading')
     setStageIdx(0)
     setProgress(0)
+    setAiSource(null)
 
     // Create session in store (generates a real ID)
     const newSession = createSession({
@@ -142,19 +149,50 @@ export function GenerateCTA({
     })
     sessionIdRef.current = newSession.id
 
-    // Generate mock intelligence
-    const strategy = generateMockStrategy({
-      subject,
-      subjectCategory,
-      professorArchetype,
-      hoursRemaining,
-      targetMarks,
-      weakTopics,
-    })
-    setStrategy(strategy)
+    // Run loading animation and AI generation concurrently
+    // The animation provides emotional reassurance while AI processes
+    let usedMock = false
+    try {
+      const { extractTextFromPDF } = await import('@/lib/pdf-parser')
+      const syllabusText = syllabusFile ? await extractTextFromPDF(syllabusFile) : undefined
+      const pyqText = pyqFile ? await extractTextFromPDF(pyqFile) : undefined
 
-    // Run visual stages concurrently (~3s total)
-    await runStages()
+      const [aiResult] = await Promise.all([
+        generateAIStrategy({
+          subject,
+          subjectCategory,
+          professorArchetype: professorArchetype.join(','),
+          hoursRemaining,
+          targetMarks,
+          weakTopics,
+          sessionId: newSession.id,
+          syllabusText,
+          pyqText,
+        }),
+        runStages(),
+      ])
+
+      if (aiResult.success && aiResult.strategy) {
+        setStrategy(aiResult.strategy)
+        setAiSource(aiResult.source)
+        console.log('[CramPilot] Strategy generated via:', aiResult.source, aiResult.meta)
+      } else {
+        throw new Error(aiResult.error || 'AI returned empty strategy')
+      }
+    } catch (error: any) {
+      console.error('[CramPilot] AI generation failed, using mock:', error)
+      usedMock = true
+      // Ultimate fallback — synchronous mock engine (never fails)
+      const mockStrategy = generateMockStrategy({
+        subject, subjectCategory, professorArchetype,
+        hoursRemaining, targetMarks, weakTopics,
+      })
+      setStrategy(mockStrategy)
+      setAiSource('fallback')
+      // Ensure the loading animation finishes
+      await runStages()
+    }
+
     setPhase('done')
     onGenerate?.()
 

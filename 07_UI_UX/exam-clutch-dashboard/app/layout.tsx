@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from '@/components/ui/sonner'
+import { PostHogProvider } from '@/components/providers/posthog-provider'
 import './globals.css'
 
 // ── Fonts ──────────────────────────────────────────────────
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     template: '%s | CramPilot',
   },
   description:
-    'An intelligent AI-powered exam co-pilot that helps students survive exams under extreme time pressure.',
+    'The premier AI-powered exam survival co-pilot. Generate intelligent, high-yield study roadmaps and pass your university exams under extreme time pressure.',
   keywords: [
     'exam preparation',
     'AI study tool',
@@ -43,14 +44,18 @@ export const metadata: Metadata = {
     siteName: 'CramPilot',
     title: 'CramPilot — Your AI Exam Survival Co-Pilot',
     description:
-      'An intelligent AI-powered exam co-pilot that helps students survive exams under extreme time pressure.',
+      'The premier AI-powered exam survival co-pilot. Generate intelligent, high-yield study roadmaps and pass your university exams under extreme time pressure.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'CramPilot — Your AI Exam Survival Co-Pilot',
-    description: 'An intelligent AI-powered exam co-pilot that helps students survive exams under extreme time pressure.',
+    description: 'The premier AI-powered exam survival co-pilot. Generate intelligent, high-yield study roadmaps and pass your university exams under extreme time pressure.',
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: '/logo-transparent.png',
+    apple: '/logo-transparent.png',
+  },
 }
 
 export const viewport: Viewport = {
@@ -74,8 +79,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="font-sans antialiased min-h-screen bg-page-ec text-primary-ec">
-        {children}
-        <Toaster
+        <PostHogProvider>
+          {children}
+          
+          {/* Global Version Footer */}
+          <div className="fixed bottom-3 right-4 text-[10px] font-[500] text-[#706E67] pointer-events-none z-[100] mix-blend-difference opacity-50">
+            CramPilot MVP v0.1
+          </div>
+
+          <Toaster
           position="bottom-center"
           toastOptions={{
             classNames: {
@@ -85,6 +97,7 @@ export default function RootLayout({
           }}
         />
         {process.env.NODE_ENV === 'production' && <Analytics />}
+        </PostHogProvider>
       </body>
     </html>
   )

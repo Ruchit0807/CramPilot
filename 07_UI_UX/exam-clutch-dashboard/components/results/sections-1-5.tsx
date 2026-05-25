@@ -29,6 +29,7 @@ const PRIORITY_META = {
   critical: { color: '#F87171', bg: 'rgba(248,113,113,0.1)', label: 'CRITICAL', border: 'rgba(248,113,113,0.25)' },
   high:     { color: '#FBBF24', bg: 'rgba(251,191,36,0.08)', label: 'HIGH',     border: 'rgba(251,191,36,0.25)' },
   moderate: { color: '#818CF8', bg: 'rgba(129,140,248,0.08)',label: 'MODERATE', border: 'rgba(129,140,248,0.2)' },
+  low:      { color: '#706E67', bg: 'rgba(112,110,103,0.06)',label: 'LOW',      border: 'rgba(112,110,103,0.15)' },
   skip:     { color: '#706E67', bg: 'rgba(112,110,103,0.06)',label: 'SKIP',     border: 'rgba(112,110,103,0.15)' },
 }
 
@@ -57,7 +58,7 @@ export function EmergencyExamSummary() {
   if (!session || !session.strategy) return null
   const strategy = session.strategy
   
-  const level = strategy.scores.emergencyLevel
+  const level = strategy.scores?.emergencyLevel || 'stable'
   const urgColor = level === 'critical' ? '#F87171' : level === 'emergency' ? '#FBBF24' : '#4ADE80'
 
   return (
@@ -79,7 +80,7 @@ export function EmergencyExamSummary() {
                 <Zap className="w-4 h-4" style={{ color: urgColor }} />
               </motion.div>
               <p className="text-[11px] font-[700] uppercase tracking-[0.1em]" style={{ color: urgColor }}>
-                Emergency Exam Summary · {strategy.scores.emergencyLevel.toUpperCase()} ALERT
+                Emergency Exam Summary · {(strategy.scores?.emergencyLevel || 'stable').toUpperCase()} ALERT
               </p>
             </div>
             <h1 className="text-[26px] lg:text-[32px] font-[500] text-[#F0EFE8] tracking-[-0.02em] leading-tight">
@@ -95,7 +96,7 @@ export function EmergencyExamSummary() {
             style={{ borderColor: `${urgColor}30`, background: `${urgColor}0A` }}>
             <p className="text-[11px] font-[600] uppercase tracking-wider text-[#9E9C96] mb-1">Survivability</p>
             <p className="text-[40px] font-[700] leading-none" style={{ color: urgColor }}>
-              {strategy.scores.survivabilityScore}<span className="text-[20px] font-[400]">%</span>
+              {strategy.scores?.survivabilityScore ?? '--'}<span className="text-[20px] font-[400]">%</span>
             </p>
             <p className="text-[11px] text-[#706E67] mt-1">Achievable with this plan</p>
           </div>
@@ -104,10 +105,10 @@ export function EmergencyExamSummary() {
         {/* Stats row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Confidence Level', value: `${strategy.scores.confidenceLevel}%`, color: '#818CF8', bar: strategy.scores.confidenceLevel },
-            { label: 'AI Coverage',      value: `${strategy.scores.coveragePercent}%`, color: '#4ADE80', bar: strategy.scores.coveragePercent },
-            { label: 'Estimated Marks',  value: strategy.scores.estimatedMarks,       color: '#FBBF24', bar: null },
-            { label: 'AI Confidence',    value: `${strategy.scores.aiConfidence}%`,   color: '#818CF8', bar: strategy.scores.aiConfidence },
+            { label: 'Confidence Level', value: `${strategy.scores?.confidenceLevel ?? '--'}%`, color: '#818CF8', bar: strategy.scores?.confidenceLevel ?? 0 },
+            { label: 'AI Coverage',      value: `${strategy.scores?.coveragePercent ?? '--'}%`, color: '#4ADE80', bar: strategy.scores?.coveragePercent ?? 0 },
+            { label: 'Estimated Marks',  value: strategy.scores?.estimatedMarks ?? '--',       color: '#FBBF24', bar: null },
+            { label: 'AI Confidence',    value: `${strategy.scores?.aiConfidence ?? '--'}%`,   color: '#818CF8', bar: strategy.scores?.aiConfidence ?? 0 },
           ].map((s) => (
             <div key={s.label} className="p-3 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)]">
               <p className="text-[11px] text-[#706E67] mb-1">{s.label}</p>
@@ -136,12 +137,12 @@ export function EmergencyExamSummary() {
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: urgColor }} />
           <div>
             <p className="text-[13px] font-[500] text-[#F0EFE8]">
-              {strategy.scores.emergencyLevel === 'critical'
+              {strategy.scores?.emergencyLevel === 'critical'
                 ? 'Critical mode: Focus ONLY on the top topics. Skip everything else.'
-                : `You have ${session.hoursRemaining}h. This plan covers ${strategy.scores.coveragePercent}% of likely exam content. Trust the system.`}
+                : `You have ${session.hoursRemaining}h. This plan covers ${strategy.scores?.coveragePercent ?? '--'}% of likely exam content. Trust the system.`}
             </p>
             <p className="text-[12px] text-[#9E9C96] mt-1">
-              {strategy.topics.filter(t => t.priority === 'critical').length} critical topics · {strategy.topics.filter(t => t.priority === 'skip').length} topics safely skippable
+              {(strategy.topics || []).filter(t => t.priority === 'critical').length} critical topics · {(strategy.topics || []).filter(t => t.priority === 'skip').length} topics safely skippable
             </p>
             <motion.div 
               initial={{ opacity: 0 }}
@@ -150,7 +151,7 @@ export function EmergencyExamSummary() {
               className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]"
             >
               <p className="text-[11px] font-[600] tracking-wider uppercase mb-1" style={{ color: urgColor }}>
-                Strategy Confidence: {strategy.scores.confidenceStatus || 'High'}
+                Strategy Confidence: {strategy.scores?.confidenceStatus || 'High'}
               </p>
               <p className="text-[11px] text-[#9E9C96]">
                 This roadmap is strictly optimized for your remaining time. Follow it exactly to maximize {session.targetMarks} marks.
@@ -180,7 +181,7 @@ export function AIWorkflowSection() {
         <div className="absolute left-[22px] top-8 bottom-8 w-px bg-gradient-to-b from-[#818CF8] via-[rgba(129,140,248,0.3)] to-transparent hidden sm:block" />
 
         <div className="space-y-3">
-          {strategy.workflows.map((wf, i) => {
+          {(strategy.workflows || []).map((wf, i) => {
             const meta = TOOL_META[wf.tool as AITool] || TOOL_META.claude
             return (
               <motion.div key={wf.id}
@@ -247,8 +248,9 @@ export function TopicPrioritySection() {
   if (!session || !session.strategy) return null
   const strategy = session.strategy
 
-  const displayed = filter === 'all' ? strategy.topics
-    : strategy.topics.filter(t => t.priority === filter || (filter === 'critical' && t.priority === 'high'))
+  const topicsList = strategy.topics || []
+  const displayed = filter === 'all' ? topicsList
+    : topicsList.filter(t => t.priority === filter || (filter === 'critical' && t.priority === 'high'))
 
   return (
     <motion.section variants={staggerItem}>
@@ -341,8 +343,9 @@ export function StudySkipSection() {
   if (!session || !session.strategy) return null
   const strategy = session.strategy
 
-  const studyNow = strategy.topics.filter(t => t.priority === 'critical' || t.priority === 'high')
-  const skipLater = strategy.topics.filter(t => t.priority === 'skip')
+  const topicsList = strategy.topics || []
+  const studyNow = topicsList.filter(t => t.priority === 'critical' || t.priority === 'high')
+  const skipLater = topicsList.filter(t => t.priority === 'skip')
   const totalStudyHours = studyNow.reduce((a, t) => a + t.hoursNeeded, 0)
   const savedHours = skipLater.reduce((a, t) => a + t.hoursNeeded, 0)
 
@@ -434,7 +437,7 @@ export function ProfessorRecommendationsSection() {
       </div>
 
       <div className="space-y-2">
-        {strategy.professorTips.map((tip, i) => {
+        {(strategy.professorTips || []).map((tip, i) => {
           const style = URGENCY_STYLE[tip.urgency] || URGENCY_STYLE.moderate
           return (
             <motion.div key={tip.id}

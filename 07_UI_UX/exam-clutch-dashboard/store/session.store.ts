@@ -6,6 +6,7 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { syncSessionToDb, saveStrategyToDb } from '@/app/actions/session'
 import type {
   ExamSession,
   Topic,
@@ -68,7 +69,16 @@ const PHASE_ORDER: WorkflowPhase[] = [
 ]
 
 function generateSessionId(): string {
-  return `ec_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+  // Generate a proper UUID compatible with the Supabase sessions table
+  // Safe fallback for insecure contexts (e.g. accessing dev server via IP)
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
 
 function generateToken(): string {
@@ -136,22 +146,32 @@ export const useSessionStore = create<SessionState>()(
           completedBlocks: [],
           error: null 
         })
+        syncSessionToDb(newSession).catch(console.error)
         return newSession
       },
 
-      setStrategy: (strategy) =>
+      setStrategy: (strategy) => {
         set((state) => ({
           session: state.session
             ? { ...state.session, strategy, lastActiveAt: new Date() }
             : null,
-        })),
+        }))
+        const { session } = get()
+        if (session) {
+          saveStrategyToDb(session.id, strategy).catch(console.error)
+          syncSessionToDb(session).catch(console.error)
+        }
+      },
 
-      updateSession: (updates) =>
+      updateSession: (updates) => {
         set((state) => ({
           session: state.session
             ? { ...state.session, ...updates, lastActiveAt: new Date() }
             : null,
-        })),
+        }))
+        const { session } = get()
+        if (session) syncSessionToDb(session).catch(console.error)
+      },
 
       clearSession: () => set({ session: null, error: null }),
 
@@ -215,7 +235,7 @@ export const useSessionStore = create<SessionState>()(
           }
         }),
 
-      advancePhase: () =>
+      advancePhase: () => {
         set((state) => {
           if (!state.session) return {}
           const currentIndex = PHASE_ORDER.indexOf(state.session.currentPhase)
@@ -231,15 +251,21 @@ export const useSessionStore = create<SessionState>()(
               lastActiveAt: new Date(),
             },
           }
-        }),
+        })
+        const { session } = get()
+        if (session) syncSessionToDb(session).catch(console.error)
+      },
 
-      setPhase: (phase) =>
+      setPhase: (phase) => {
         set((state) => {
           if (!state.session) return {}
           return {
             session: { ...state.session, currentPhase: phase },
           }
-        }),
+        })
+        const { session } = get()
+        if (session) syncSessionToDb(session).catch(console.error)
+      },
 
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),

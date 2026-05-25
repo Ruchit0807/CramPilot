@@ -131,7 +131,8 @@ export function PromptCardsSection() {
   if (!session || !session.strategy) return null
   const strategy = session.strategy
 
-  const visible = showAll ? strategy.prompts : strategy.prompts.slice(0, 4)
+  const prompts = strategy.prompts || []
+  const visible = showAll ? prompts : prompts.slice(0, 4)
 
   return (
     <motion.section variants={staggerItem}>
@@ -139,7 +140,7 @@ export function PromptCardsSection() {
       <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-3">
         {visible.map((p: any) => <PromptCard key={p.id} prompt={p} />)}
       </motion.div>
-      {!showAll && strategy.prompts.length > 4 && (
+      {!showAll && prompts.length > 4 && (
         <button onClick={() => setShowAll(true)}
           className="mt-3 w-full py-3 rounded-xl border border-[rgba(255,255,255,0.08)] text-[13px] text-[#9E9C96] hover:text-[#F0EFE8] hover:border-[rgba(255,255,255,0.15)] transition-colors">
           Show {strategy.prompts.length - 4} more prompts
@@ -161,7 +162,7 @@ export function RevisionStrategySection() {
     <motion.section variants={staggerItem}>
       <SectionHeader eyebrow="Study Science" title="Revision Strategy" icon={RotateCcw} color="#4ADE80" />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {strategy.revisionStrategy.map((s: any, i: number) => (
+        {(strategy.revisionStrategy || []).map((s: any, i: number) => (
           <motion.div key={s.id}
             initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }}
             transition={{ delay: i * 0.07 }}
@@ -188,7 +189,7 @@ export function FlashcardSection() {
   
   if (!session || !session.strategy) return null
   const strategy = session.strategy
-  const cards = strategy.flashcards
+  const cards = strategy.flashcards || []
   if (!cards || cards.length === 0) return null
 
   const card = cards[current]
@@ -275,7 +276,7 @@ export function AudioRevisionSection() {
       </div>
 
       <div className="space-y-2">
-        {strategy.audioRecommendations.map((ar: any, i: number) => (
+        {(strategy.audioRecommendations || []).map((ar: any, i: number) => (
           <motion.div key={ar.id}
             initial={{ opacity:0, x:-6 }} animate={{ opacity:1, x:0 }} transition={{ delay: i*0.06 }}
             className="flex items-center gap-3 p-3.5 rounded-xl border border-[rgba(255,255,255,0.07)] bg-[rgba(28,28,26,0.8)]">
@@ -317,7 +318,8 @@ export function TimelineSection() {
   if (!session || !session.strategy) return null
   const strategy = session.strategy
 
-  const visible = expanded ? strategy.timeline : strategy.timeline.slice(0, 7)
+  const timeline = strategy.timeline || []
+  const visible = expanded ? timeline : timeline.slice(0, 7)
 
   return (
     <motion.section variants={staggerItem}>
@@ -375,10 +377,10 @@ export function TimelineSection() {
         </div>
       </div>
 
-      {!expanded && strategy.timeline.length > 7 && (
+      {!expanded && timeline.length > 7 && (
         <button onClick={() => setExpanded(true)}
           className="mt-3 w-full py-3 rounded-xl border border-[rgba(255,255,255,0.08)] text-[13px] text-[#9E9C96] hover:text-[#F0EFE8] hover:border-[rgba(255,255,255,0.15)] transition-colors">
-          Show full {strategy.timeline.length - 7} more time blocks
+          Show full {timeline.length - 7} more time blocks
         </button>
       )}
     </motion.section>
